@@ -27,19 +27,19 @@ async function openVolViewPage(fileName: string) {
   await volViewPage.waitForViews();
   const notifications = await volViewPage.getNotificationsCount();
   expect(notifications).toEqual(0);
-  
+
   // Check that no placeholder overlays are visible (mdi-image-off icons)
   // The overlays are in divs that are shown/hidden based on imageID
   const visibleOverlayCount = await browser.execute(() => {
     const imageOffIcons = document.querySelectorAll('i.mdi-image-off');
-    return Array.from(imageOffIcons).filter(icon => {
+    return Array.from(imageOffIcons).filter((icon) => {
       const parent = icon.closest('div.overlay');
       if (!parent) return false;
       const style = window.getComputedStyle(parent);
       return style.display !== 'none' && style.visibility !== 'hidden';
     }).length;
   });
-  
+
   expect(visibleOverlayCount).toEqual(0);
 }
 
@@ -50,6 +50,13 @@ describe('State file manifest.json code', () => {
       'pre-multi-4up.5-0-1.volview.json'
     );
     const fileName = 'temp-session.volview.zip';
+    await writeManifestToZip(manifestPath, fileName);
+    await openVolViewPage(fileName);
+  });
+
+  it('has no errors loading manifest with axial layer layout', async () => {
+    const manifestPath = path.join(FIXTURES, 'layer-axial.5-0-1.volview.json');
+    const fileName = 'temp-layer-axial.volview.zip';
     await writeManifestToZip(manifestPath, fileName);
     await openVolViewPage(fileName);
   });
